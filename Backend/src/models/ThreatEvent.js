@@ -6,7 +6,7 @@ const threatEventSchema = new Schema({
   event_type: { type: String, enum: ['credential_leak','unauthorized_ip','phishing_attempt'], required: true },
   detected_at: { type: Date, default: Date.now },
   severity: { type: String, enum: ['low','medium','high'], default: 'medium' },
-  metadata: { type: Schema.Types.Mixed } 
+  metadata: { type: Schema.Types.Mixed }
 });
 
 const ThreatEvent = mongoose.model('ThreatEvent', threatEventSchema);
