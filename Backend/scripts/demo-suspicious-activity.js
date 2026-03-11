@@ -146,15 +146,15 @@ const simulateLogin = async (options = {}) => {
 
   try {
     const client = createClient(proxy?.url, user_agent);
-    
+
     // Log to shield-access endpoint
     const response = await client.post('/api/shield-access', payload);
     return { success: true, data: response.data, payload };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: error.response?.data || error.message,
-      payload 
+      payload
     };
   }
 };

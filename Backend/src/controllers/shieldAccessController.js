@@ -10,12 +10,12 @@ export const createShieldAccess = async (req, res) => {
   try {
     const access = new SheildAccess(req.body);
     const savedAccess = await access.save();
-    
+
     // Score the access with AI Engine (non-blocking)
     let aiResult = null;
     try {
       aiResult = await scoreShieldAccess(savedAccess);
-      
+
       if (aiResult.success && aiResult.data.risk_level !== 'low') {
         // Log threat event if risk is elevated
         const threat = new ThreatEvent({
@@ -31,7 +31,7 @@ export const createShieldAccess = async (req, res) => {
           },
         });
         await threat.save();
-        
+
         // Log to blockchain if high risk
         if (aiResult.data.risk_level === 'high' || aiResult.data.risk_level === 'critical') {
           try {
@@ -45,7 +45,7 @@ export const createShieldAccess = async (req, res) => {
           } catch (bcError) {
             console.error('[Blockchain] Anomaly logging failed:', bcError.message);
           }
-          
+
           // Auto-burn identity if action is 'burn'
           if (aiResult.data.action === 'burn') {
             await ShieldIdentity.findByIdAndUpdate(savedAccess.shield_id, {
@@ -59,7 +59,7 @@ export const createShieldAccess = async (req, res) => {
     } catch (aiError) {
       console.error('[AI Service] Scoring failed:', aiError.message);
     }
-    
+
     return sendResponse(res, 201, {
       ...savedAccess.toObject(),
       ai_assessment: aiResult?.data || null,
